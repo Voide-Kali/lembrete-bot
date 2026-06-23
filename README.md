@@ -47,3 +47,9 @@ lembrete-bot/
 ├── lembrete-bot.service
 └── README.md
 ```
+
+## Governança
+
+- [LICENSE](LICENSE)
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [CHANGELOG.md](CHANGELOG.md)
