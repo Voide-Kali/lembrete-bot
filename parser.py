@@ -35,6 +35,9 @@ Regras:
 - Se disser "daqui 30 minutos", some 30 minutos ao horario atual
 - Se nao conseguir interpretar, responda: {{"erro": "nao entendi"}}"""
 
+    if not GROQ_API_KEY:
+        logger.error("GROQ_API_KEY não configurada")
+        return None
     try:
         response = requests.post(
             GROQ_URL,
@@ -59,7 +62,14 @@ Regras:
             if "erro" in data:
                 return None
 
-            return data
+            try:
+                quando = datetime.strptime(data["quando"], "%Y-%m-%d %H:%M:%S")
+            except (KeyError, TypeError, ValueError):
+                return None
+            agora_local = datetime.now(pytz.timezone(TIMEZONE)).replace(tzinfo=None)
+            if quando <= agora_local:
+                return None
+            return {"mensagem": str(data["mensagem"]).strip(), "quando": data["quando"]}
         else:
             logger.error(f"Groq erro {response.status_code}: {response.text}")
             return None

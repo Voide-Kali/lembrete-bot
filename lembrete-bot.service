@@ -1,0 +1,18 @@
+[Unit]
+Description=Central profissional de lembretes Telegram
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=voide
+WorkingDirectory=/home/voide/Projetos/lembrete-bot
+ExecStart=/home/voide/Projetos/lembrete-bot/venv/bin/python /home/voide/Projetos/lembrete-bot/main.py
+Restart=on-failure
+RestartSec=10
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

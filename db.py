@@ -1,8 +1,10 @@
 import sqlite3
 import logging
+from datetime import datetime
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
-DB_FILE = "lembretes.db"
+DB_FILE = Path(__file__).resolve().parent / "lembretes.db"
 
 
 def init_db():
@@ -62,11 +64,13 @@ def cancelar_lembrete(lembrete_id: int, chat_id: str) -> bool:
     return deletado
 
 
-def buscar_pendentes() -> list:
+def buscar_pendentes(agora: datetime) -> list:
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT id, chat_id, mensagem FROM lembretes WHERE enviado = 0 AND quando <= datetime('now')"
+        "SELECT id, chat_id, mensagem FROM lembretes "
+        "WHERE enviado = 0 AND quando <= ? ORDER BY quando ASC",
+        (agora.strftime("%Y-%m-%d %H:%M:%S"),),
     )
     rows = cursor.fetchall()
     conn.close()
@@ -79,3 +83,28 @@ def marcar_enviado(lembrete_id: int):
     cursor.execute("UPDATE lembretes SET enviado = 1 WHERE id = ?", (lembrete_id,))
     conn.commit()
     conn.close()
+
+
+def adiar_lembrete(lembrete_id: int, chat_id: str, quando: datetime) -> bool:
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE lembretes SET quando = ?, enviado = 0 WHERE id = ? AND chat_id = ?",
+        (quando.strftime("%Y-%m-%d %H:%M:%S"), lembrete_id, chat_id),
+    )
+    atualizado = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    return atualizado
+
+
+def contar_enviados(chat_id: str) -> int:
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT COUNT(*) FROM lembretes WHERE chat_id = ? AND enviado = 1",
+        (chat_id,),
+    )
+    total = cursor.fetchone()[0]
+    conn.close()
+    return total
