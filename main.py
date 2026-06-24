@@ -6,6 +6,7 @@ from __future__ import annotations
 import asyncio
 import html
 import logging
+import sys
 import time
 from datetime import datetime, timedelta
 
@@ -320,7 +321,10 @@ async def handle_error(update: object, context: ContextTypes.DEFAULT_TYPE) -> No
 
 def main() -> None:
     if not config.TELEGRAM_TOKEN:
-        raise RuntimeError("LEMBRETE_TELEGRAM_TOKEN não configurado.")
+        logger.error(
+            "Token do Telegram não configurado. Defina LEMBRETE_TELEGRAM_TOKEN no .env."
+        )
+        sys.exit(78)
     db.init_db()
     application = (
         Application.builder()

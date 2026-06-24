@@ -11,6 +11,7 @@ User=voide
 WorkingDirectory=/home/voide/Projetos/lembrete-bot
 ExecStart=/home/voide/Projetos/lembrete-bot/venv/bin/python /home/voide/Projetos/lembrete-bot/main.py
 Restart=on-failure
+RestartPreventExitStatus=78
 RestartSec=10
 UMask=0077
 

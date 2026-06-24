@@ -24,6 +24,7 @@ cp config.example.py config.py
 ## Configuração
 
 - preencha `LEMBRETE_TELEGRAM_TOKEN`;
+- use um token próprio para este bot, sem reutilizar token de outro bot em polling;
 - defina `ALLOWED_CHAT_ID`;
 - ajuste `TIMEZONE`;
 - configure `GROQ_API_KEY` e `GROQ_MODEL` se quiser geração com IA.
